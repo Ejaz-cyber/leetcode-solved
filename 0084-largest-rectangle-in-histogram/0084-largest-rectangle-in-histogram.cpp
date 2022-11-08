@@ -1,65 +1,49 @@
 class Solution {
 public:
-    vector<int> nSmallest(vector<int> &arr){
+    int largestRectangleArea(vector<int>& heights) {
+        int n = heights.size();
         stack<int> st;
-        st.push(-1);
-        int n = arr.size();
-        vector<int> ans(n);
+        int leftSmall[n], rightSmall[n];
         
-        for(int i = n-1; i>=0; i--){
-            
-            while(st.top() != -1 && arr[i] <= arr[st.top()])
-                st.pop();
-            
-            if(st.top() == -1)
-                ans[i] = n;
-            else ans[i] = st.top();
-            
-            st.push(i);
-        }
-        
-        return ans;
-    }
-    
-    vector<int> pSmallest(vector<int> &arr){
-        stack<int> st;
-        st.push(-1);
-        int n = arr.size();
-        vector<int> ans(n);
-        
+        // left small
         for(int i = 0; i<n; i++){
             
-            while(st.top() != -1 && arr[i] <= arr[st.top()]) st.pop();
+            while(!st.empty() && heights[st.top()] >= heights[i]) st.pop();
             
-            ans[i] = st.top();
+            if(st.empty())
+                leftSmall[i] = 0;
+            else
+                leftSmall[i] = st.top() + 1;
             
             st.push(i);
         }
         
-        return ans;
+        // clear up stack for reuse
+        while(st.empty() == false) st.pop();
         
-    }
-    int largestRectangleArea(vector<int>& heights) {
-        vector<int> ns = nSmallest(heights);     
-        vector<int> ps = pSmallest(heights);
-
-        int size = heights.size();
-        
-        vector<int> bre(size);
-        for(int i = 0; i<ns.size(); i++){
-            bre[i] = ns[i] - ps[i] -1;
-        }
-        
-        int maxArea = INT_MIN;
-        for(int i = 0; i<size; i++){
-            int l = heights[i];
-            int b = bre[i];
+        // right small
+        for(int i = n-1; i>=0; i--){
             
-            maxArea = max(maxArea, l*b);
+            while(st.empty() == false && heights[st.top()] >= heights[i])
+                st.pop();
+            
+            if(st.empty()) rightSmall[i] = n-1;
+            else rightSmall[i] = st.top() - 1;
+            
+            st.push(i);
         }
         
         
+        int maxArea = 0;
+        for(int i = 0; i<n; i++){
+            
+            int length = rightSmall[i] - leftSmall[i] + 1;
+            maxArea = max(maxArea, heights[i]*length);
+        }
         
         return maxArea;
+        
+        
+        
     }
 };
