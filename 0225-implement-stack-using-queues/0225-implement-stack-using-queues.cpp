@@ -1,22 +1,20 @@
 class MyStack {
 public:
+    
+    // using single queue only
+    
     queue<int> q1;
-    queue<int> q2;
     
     MyStack() {
         
     }
     
     void push(int x) {
-        while(!q1.empty()){
-            int n = q1.front();
-            q1.pop();
-            q2.push(n);
-        }
         q1.push(x);
-        while(!q2.empty()){
-            q1.push(q2.front());
-            q2.pop();
+        for(int i = 0; i<q1.size()-1; i++){
+            int num = q1.front();
+            q1.pop();
+            q1.push(num);
         }
     }
     
